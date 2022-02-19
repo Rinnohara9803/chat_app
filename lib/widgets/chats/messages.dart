@@ -32,22 +32,25 @@ class Messages extends StatelessWidget {
         } else {
           final documents = streamSnapshot.data!.docs;
           String _userEmail = _user.email as String;
-          return ListView.builder(
-            padding: const EdgeInsets.only(
-              top: 10,
+          return Padding(
+            padding: const EdgeInsets.symmetric(
+              vertical: 5,
+              horizontal: 10,
             ),
-            reverse: true,
-            itemCount: documents.length,
-            itemBuilder: (ctx, i) {
-              return MessageBubble(
-                text: documents[i]['text'],
-                userEmail: _userEmail,
-                isMe: documents[i]['userId'] == _user.uid,
-                uniqueKey: ValueKey(
-                  documents[i].id,
-                ),
-              );
-            },
+            child: ListView.builder(
+              reverse: true,
+              itemCount: documents.length,
+              itemBuilder: (ctx, i) {
+                return MessageBubble(
+                  text: documents[i]['text'],
+                  userEmail: _userEmail,
+                  isMe: documents[i]['userId'] == _user.uid,
+                  uniqueKey: ValueKey(
+                    documents[i].id,
+                  ),
+                );
+              },
+            ),
           );
         }
       },

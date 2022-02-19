@@ -1,4 +1,8 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
+
+import 'add_image_widget.dart';
 
 class AuthForm extends StatefulWidget {
   final Function submitAuthForm;
@@ -19,6 +23,11 @@ class _AuthFormState extends State<AuthForm> {
   String _userName = '';
   String _userEmail = '';
   String _userPassword = '';
+  File? _userProfilePhoto;
+
+  void _getUserProfilePhoto(File imageFile) {
+    _userProfilePhoto = imageFile;
+  }
 
   void _changeAuthState() {
     setState(() {
@@ -27,6 +36,17 @@ class _AuthFormState extends State<AuthForm> {
   }
 
   void _submitForm() {
+    if (_userProfilePhoto == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: const Text('Please pick an image.'),
+          backgroundColor: Colors.redAccent.withOpacity(
+            0.7,
+          ),
+        ),
+      );
+      return;
+    }
     if (!_formKey.currentState!.validate()) {
       return;
     }
@@ -59,6 +79,10 @@ class _AuthFormState extends State<AuthForm> {
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
+                    if (!_isSignIn)
+                      AddImageWidget(
+                        getUserProfilePhoto: _getUserProfilePhoto,
+                      ),
                     if (!_isSignIn)
                       TextFormField(
                         key: UniqueKey(),
