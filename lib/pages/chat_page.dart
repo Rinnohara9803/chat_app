@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 class ChatPage extends StatelessWidget {
@@ -9,14 +10,41 @@ class ChatPage extends StatelessWidget {
     var i = 1;
     return SafeArea(
       child: Scaffold(
+        appBar: AppBar(
+          title: const Text('Flutter Chat'),
+          actions: [
+            PopupMenuButton(
+              onSelected: (value) {
+                if (value == 'logout') {
+                  FirebaseAuth.instance.signOut();
+                }
+              },
+              itemBuilder: (_) => [
+                PopupMenuItem(
+                  value: 'logout',
+                  child: Row(
+                    children: const [
+                      Text(
+                        'Logout',
+                      ),
+                      SizedBox(
+                        width: 10,
+                      ),
+                      Icon(
+                        Icons.logout,
+                        color: Colors.black,
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            )
+          ],
+        ),
         body: StreamBuilder<QuerySnapshot>(
           stream: FirebaseFirestore.instance
               .collection(
                 'chats/Jv9CL1K7Cl0KrIM5Z8cQ/messages',
-              )
-              .orderBy(
-                'createdAt',
-                descending: false,
               )
               .snapshots(),
           builder: (ctx, streamSnapshot) {
@@ -54,7 +82,6 @@ class ChatPage extends StatelessWidget {
                 .add(
               {
                 'text': 'test $i',
-                'createdAt': i,
               },
             );
             i++;

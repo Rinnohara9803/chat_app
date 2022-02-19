@@ -1,4 +1,6 @@
 import 'package:chat_app/pages/auth_page.dart';
+import 'package:chat_app/pages/chat_page.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 
@@ -19,7 +21,16 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blueGrey,
       ),
-      home: const AuthPage(),
+      home: StreamBuilder(
+        stream: FirebaseAuth.instance.authStateChanges(),
+        builder: (ctx, streamSnapshot) {
+          if (streamSnapshot.hasData) {
+            return const ChatPage();
+          } else {
+            return const AuthPage();
+          }
+        },
+      ),
     );
   }
 }
