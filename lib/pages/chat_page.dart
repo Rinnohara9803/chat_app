@@ -6,6 +6,7 @@ class ChatPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    var i = 1;
     return SafeArea(
       child: Scaffold(
         body: StreamBuilder<QuerySnapshot>(
@@ -31,6 +32,7 @@ class ChatPage extends StatelessWidget {
               );
             } else {
               final documents = streamSnapshot.data!.docs;
+
               return ListView.builder(
                 itemCount: documents.length,
                 itemBuilder: (ctx, i) {
@@ -51,10 +53,11 @@ class ChatPage extends StatelessWidget {
                 .collection('chats/Jv9CL1K7Cl0KrIM5Z8cQ/messages')
                 .add(
               {
-                'text': 'test 3',
-                'createdAt': 3,
+                'text': 'test $i',
+                'createdAt': i,
               },
             );
+            i++;
           },
         ),
       ),
