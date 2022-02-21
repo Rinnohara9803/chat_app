@@ -41,20 +41,27 @@ class Messages extends StatelessWidget {
               vertical: 5,
               horizontal: 10,
             ),
-            child: ListView.builder(
-              reverse: true,
-              itemCount: documents.length,
-              itemBuilder: (ctx, i) {
-                return MessageBubble(
-                  text: documents[i]['text'],
-                  userName: documents[i]['userName'],
-                  isMe: documents[i]['userId'] == _user.uid,
-                  uniqueKey: ValueKey(
-                    documents[i].id,
+            child: documents.isEmpty
+                ? const Center(
+                    child: Text(
+                      'No messages in the chat',
+                    ),
+                  )
+                : ListView.builder(
+                    reverse: true,
+                    itemCount: documents.length,
+                    itemBuilder: (ctx, i) {
+                      return MessageBubble(
+                        text: documents[i]['text'],
+                        userName: documents[i]['userName'],
+                        userImage: documents[i]['userImage'],
+                        isMe: documents[i]['userId'] == _user.uid,
+                        uniqueKey: ValueKey(
+                          documents[i].id,
+                        ),
+                      );
+                    },
                   ),
-                );
-              },
-            ),
           );
         }
       },
