@@ -2,14 +2,14 @@ import 'package:flutter/material.dart';
 
 class MessageBubble extends StatelessWidget {
   final String text;
-  final String userEmail;
+  final String userName;
   final bool isMe;
 
   final Key uniqueKey;
 
   const MessageBubble({
     required this.text,
-    required this.userEmail,
+    required this.userName,
     required this.isMe,
     required this.uniqueKey,
     Key? key,
@@ -34,7 +34,7 @@ class MessageBubble extends StatelessWidget {
                   horizontal: 8,
                 ),
                 child: Text(
-                  userEmail,
+                  userName,
                   style: const TextStyle(
                     fontWeight: FontWeight.w500,
                     fontSize: 12,

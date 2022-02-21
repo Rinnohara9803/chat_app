@@ -21,7 +21,11 @@ class Messages extends StatelessWidget {
       builder: (ctx, streamSnapshot) {
         if (streamSnapshot.connectionState == ConnectionState.waiting) {
           return const Center(
-            child: CircularProgressIndicator(),
+            child: SizedBox(
+              height: 20,
+              width: 20,
+              child: CircularProgressIndicator(),
+            ),
           );
         } else if (streamSnapshot.hasError) {
           return Center(
@@ -31,7 +35,7 @@ class Messages extends StatelessWidget {
           );
         } else {
           final documents = streamSnapshot.data!.docs;
-          String _userEmail = _user.email as String;
+
           return Padding(
             padding: const EdgeInsets.symmetric(
               vertical: 5,
@@ -43,7 +47,7 @@ class Messages extends StatelessWidget {
               itemBuilder: (ctx, i) {
                 return MessageBubble(
                   text: documents[i]['text'],
-                  userEmail: _userEmail,
+                  userName: documents[i]['userName'],
                   isMe: documents[i]['userId'] == _user.uid,
                   uniqueKey: ValueKey(
                     documents[i].id,

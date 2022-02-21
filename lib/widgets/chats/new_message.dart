@@ -14,19 +14,34 @@ class _NewMessageState extends State<NewMessage> {
   final TextEditingController _messageController = TextEditingController();
 
   void _sendMessage() async {
-    User user = FirebaseAuth.instance.currentUser as User;
     FocusScope.of(context).unfocus();
-
-    await FirebaseFirestore.instance.collection('chat').add(
-      {
-        'text': _message,
-        'createdAt': Timestamp.now(),
-        'userId': user.uid,
-      },
-    );
     setState(() {
       _messageController.clear();
     });
+
+    try {
+      User user = FirebaseAuth.instance.currentUser as User;
+      final userData = await FirebaseFirestore.instance
+          .collection('users')
+          .doc(user.uid)
+          .get();
+      await FirebaseFirestore.instance.collection('chat').add(
+        {
+          'text': _message,
+          'createdAt': Timestamp.now(),
+          'userId': user.uid,
+          'userName': userData['userName'],
+        },
+      );
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            e.toString(),
+          ),
+        ),
+      );
+    }
   }
 
   @override

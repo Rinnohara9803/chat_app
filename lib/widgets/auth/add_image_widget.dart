@@ -1,7 +1,7 @@
 import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:path/path.dart' as path;
 
 class AddImageWidget extends StatefulWidget {
   final Function getUserProfilePhoto;
@@ -22,12 +22,16 @@ class _AddImageWidgetState extends State<AddImageWidget> {
     if (image == null) {
       return;
     }
+    final _imageName = path.basename(image.path);
 
     setState(() {
       _selectedImage = File(image.path);
     });
-    widget.getUserProfilePhoto(_selectedImage);
-    Navigator.of(context).pop();
+
+    widget.getUserProfilePhoto(
+      _selectedImage,
+      _imageName,
+    );
   }
 
   @override
@@ -72,7 +76,13 @@ class _AddImageWidgetState extends State<AddImageWidget> {
                           Expanded(
                             child: InkWell(
                               onTap: () async {
-                                await _getUserPicture(ImageSource.camera);
+                                await _getUserPicture(
+                                  ImageSource.camera,
+                                ).then((value) {
+                                  if (_selectedImage != null) {
+                                    Navigator.of(context).pop();
+                                  }
+                                });
                               },
                               child: Container(
                                 padding: const EdgeInsets.symmetric(
@@ -117,7 +127,13 @@ class _AddImageWidgetState extends State<AddImageWidget> {
                           Expanded(
                             child: InkWell(
                               onTap: () async {
-                                await _getUserPicture(ImageSource.gallery);
+                                await _getUserPicture(
+                                  ImageSource.gallery,
+                                ).then((value) {
+                                  if (_selectedImage != null) {
+                                    Navigator.of(context).pop();
+                                  }
+                                });
                               },
                               child: Container(
                                 padding: const EdgeInsets.symmetric(

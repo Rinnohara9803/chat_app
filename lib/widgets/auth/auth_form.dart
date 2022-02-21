@@ -1,7 +1,5 @@
 import 'dart:io';
-
 import 'package:flutter/material.dart';
-
 import 'add_image_widget.dart';
 
 class AuthForm extends StatefulWidget {
@@ -24,9 +22,14 @@ class _AuthFormState extends State<AuthForm> {
   String _userEmail = '';
   String _userPassword = '';
   File? _userProfilePhoto;
+  String _userImageFileName = '';
 
-  void _getUserProfilePhoto(File imageFile) {
+  void _getUserProfilePhoto(
+    File imageFile,
+    String imageName,
+  ) {
     _userProfilePhoto = imageFile;
+    _userImageFileName = imageName;
   }
 
   void _changeAuthState() {
@@ -36,13 +39,11 @@ class _AuthFormState extends State<AuthForm> {
   }
 
   void _submitForm() {
-    if (_userProfilePhoto == null) {
+    if (_userProfilePhoto == null && !_isSignIn) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: const Text('Please pick an image.'),
-          backgroundColor: Colors.redAccent.withOpacity(
-            0.7,
-          ),
+        const SnackBar(
+          content: Text('Please pick an image.'),
+          backgroundColor: Color.fromARGB(255, 189, 86, 80),
         ),
       );
       return;
@@ -55,6 +56,8 @@ class _AuthFormState extends State<AuthForm> {
       _userEmail,
       _userPassword,
       _userName,
+      _userProfilePhoto,
+      _userImageFileName,
       _isSignIn,
     );
   }
@@ -85,7 +88,7 @@ class _AuthFormState extends State<AuthForm> {
                       ),
                     if (!_isSignIn)
                       TextFormField(
-                        key: UniqueKey(),
+                        key: const ValueKey('userName'),
                         decoration: const InputDecoration(
                           labelText: 'Username',
                         ),
@@ -102,7 +105,9 @@ class _AuthFormState extends State<AuthForm> {
                         },
                       ),
                     TextFormField(
-                      key: UniqueKey(),
+                      key: _isSignIn
+                          ? const ValueKey('signInEmail')
+                          : const ValueKey('signUpEmail'),
                       decoration: const InputDecoration(
                         labelText: 'Email',
                       ),
@@ -120,7 +125,9 @@ class _AuthFormState extends State<AuthForm> {
                       },
                     ),
                     TextFormField(
-                      key: UniqueKey(),
+                      key: _isSignIn
+                          ? const ValueKey('signInPassword')
+                          : const ValueKey('signUpPassword'),
                       decoration: const InputDecoration(
                         labelText: 'Password',
                       ),

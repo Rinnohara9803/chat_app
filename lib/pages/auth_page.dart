@@ -1,4 +1,6 @@
+import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import '../widgets/auth/auth_form.dart';
@@ -17,10 +19,13 @@ class _AuthPageState extends State<AuthPage> {
     String email,
     String password,
     String userName,
+    File? imageFile,
+    String userImageName,
     bool isSign,
   ) async {
     final _auth = FirebaseAuth.instance;
     UserCredential _userCredential;
+
     try {
       setState(() {
         _isLoading = true;
@@ -35,6 +40,17 @@ class _AuthPageState extends State<AuthPage> {
           email: email,
           password: password,
         );
+
+        await FirebaseStorage.instance
+            .ref(
+              'image_file/${_userCredential.user!.uid}/$userImageName',
+            )
+            .putFile(imageFile!);
+
+        String imageUrl = await FirebaseStorage.instance
+            .ref('image_file/${_userCredential.user!.uid}/$userImageName')
+            .getDownloadURL();
+
         await FirebaseFirestore.instance
             .collection('users')
             .doc(
@@ -48,7 +64,7 @@ class _AuthPageState extends State<AuthPage> {
         );
       }
     } on FirebaseAuthException catch (e) {
-      String errorMessage = 'An error occured. Please check your credentials';
+      String errorMessage = 'An error occured. Please try again later.';
 
       if (e.code == 'weak-password') {
         errorMessage = 'The password provided is too weak.';
@@ -60,14 +76,17 @@ class _AuthPageState extends State<AuthPage> {
         errorMessage = 'Wrong password provided for that user.';
       }
 
+      ScaffoldMessenger.of(context).hideCurrentSnackBar();
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(errorMessage),
         ),
       );
+
       setState(() {
         _isLoading = false;
       });
+      return;
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
